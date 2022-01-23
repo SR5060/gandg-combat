@@ -1,0 +1,23 @@
+{
+    "authors": [
+      {
+        "name": "SR5060"
+      }
+    ],
+    "description": "Grit and Glory Wound and Injury automation",
+    "languages": [
+      {
+        "lang": "en",
+        "name": "English",
+        "path": "languages/en.json"
+      }
+    ],
+    "minimumCoreVersion": "9",
+    "name": "gandg-combat",
+    "scripts": [
+      "scripts/module.js"
+    ],
+
+    "title": "Grit and Glory Combast",
+    "version": "0.1"
+  }
