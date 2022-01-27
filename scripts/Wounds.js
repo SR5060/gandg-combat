@@ -3,14 +3,27 @@ Hooks.once('init', async function() {
 
 })
 
-Hooks.on('preCreateCombatant')
+Hooks.on('preCreateCombatant', createTracker(combatantArray))
 
-/* 
-hook on createcombatant
-array[1] holds actorID, sceneId, tokenId
-array[3] holds combatant ID
-are they a pc? create a flag on combatant
+async function createTracker(combatantArray) {
+    let actorId = combatantArray[1][0];
+    let sceneId = combatantArray[1][1];
+    let tokenId = combatantArray[1][2];
+    let combatantId = combatantArray[3];
+    if (Game.actors.get(actorId).isPC = true) {
+        //create flag
+        await game.activescene.combatants.get(combatantId).setflag(MODULE.data.name, 'hasWoundRisk', {
+            woundQual: True,
+            actorId: actorId,
+            sceneId: sceneId,
+            tokenId: tokenId,
+            combatantId: combatantId
+        });
+    }
+}
+        
 
+/*
 hook on updateActor
 did hp change more than conmod + 12?
 look for flag on actor combatant for active scene
