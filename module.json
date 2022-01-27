@@ -15,9 +15,9 @@
     "minimumCoreVersion": "9",
     "name": "gandg-combat",
     "scripts": [
-      "scripts/module.js"
+      "scripts/wounds.js"
     ],
 
-    "title": "Grit and Glory Combast",
+    "title": "Grit and Glory Combat",
     "version": "0.1"
   }

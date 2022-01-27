@@ -1,8 +1,28 @@
 {
-  "TODO-LIST": {
-    "button-title": "Open To-Do list",
-    "add-todo": "Add To-Do",
-    "delete-todo": "Delete To-Do",
-    "mark-done": "Mark Done"
-  }
+  "gandg.GreatWoundDialogTitle" : "{gwFeatureName} roll for {actorName}",
+  "gandg.GreatWoundDialogContents" : "Prompt the User controlling {actorName} to roll a save against DC {DC}",
+  "gandg.GreatWoundDialogFailMessage": "{actorName} failed the {gwFeatureName} save",
+  "gandg.GreatWoundDialogSuccessMessage": "{actorName} passed the {gwFeatureName} save",
+  "gandg.GreatWoundDialogError" : "Looks like you haven't setup a table to use for {gwFeatureName} yet",
+
+  "setting.GreatWoundFeatureName.name" : "Great Wound name replacement",
+  "setting.GreatWoundFeatureName.hint" :  "What name to display for Great Wound functions",
+
+  "setting.GreatWoundTableName.name":"Great Wound Table",
+  "setting.GreatWoundTableName.hint":"Name of table that should be rolled on if a Great Wound occurs.",
+
+  "setting.GreatWoundSaveValue.name" : "Great Wound Save DC",
+  "setting.GreatWoundSaveValue.hint" : "The save DC for preventing Great Wounds, set to 0 for no save",
+
+  "setting.GreatWoundItemSetting.name": "Apply effects to Great Wounds",
+  "setting.GreatWoundItemSetting.hint": "Applies Active Effects or Items from the table result to an actor",
+  "option.GreatWoundItemSetting.none" : "Disabled",
+  "option.GreatWoundItemSetting.item" : "Add Item to inventory",
+  "option.GreatWoundItemSetting.effect" : "Add Item's Active Effect to Actor",
+  
+    "DND5EH.Default_none" : "None", 
+    "DND5EH.Default_SocketSetup" :"Dnd5e helpers socket received",
+    "DND5EH.Default_SocketSend": "socket send with {socketData}",
+    "DND5EH.Default_roll" : "Roll"
+
 }
