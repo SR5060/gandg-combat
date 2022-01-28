@@ -20,9 +20,9 @@
   "option.GreatWoundItemSetting.item" : "Add Item to inventory",
   "option.GreatWoundItemSetting.effect" : "Add Item's Active Effect to Actor",
   
-    "DND5EH.Default_none" : "None", 
-    "DND5EH.Default_SocketSetup" :"Dnd5e helpers socket received",
-    "DND5EH.Default_SocketSend": "socket send with {socketData}",
-    "DND5EH.Default_roll" : "Roll"
+    "gandg.Default_none" : "None", 
+    "gandg.Default_SocketSetup" :"Dnd5e helpers socket received",
+    "gandg.Default_SocketSend": "socket send with {socketData}",
+    "gandg.Default_roll" : "Roll"
 
 }

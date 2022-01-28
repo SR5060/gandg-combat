@@ -17,7 +17,7 @@
     "scripts": [
       "scripts/wounds.js"
     ],
-
+    "socket": true,
     "title": "Grit and Glory Combat",
     "version": "0.1"
   }

@@ -11,11 +11,14 @@ class wounds {
         Hooks.on("ready", () => {
             game.socket.on(`module.gandg-combat`, wounds.woundSocket);
 
+
         });
         
         Hooks.on('createCombatant', wounds.createTracker);
 
         Hooks.on('updateCombat', wounds.checkCombatTrigger);
+        
+        Hooks.on("preUpdateActor", wounds.preUpdateActor);
     }
 
     static createTracker(combatant) {
@@ -41,11 +44,11 @@ class wounds {
             if (woundRiskCounter > 0) {
             
                 new Dialog({
-                    title: MODULE.format("gandg.GreatWoundDialogTitle", { gwFeatureName: gwFeatureName, actorName: actor.name }),
-                    content: MODULE.format("gandg.GreatWoundDialogContents", { actorName: actor.name, DC: (woundRiskCounter + 12) }),
+                    title: wounds.format("gandg.GreatWoundDialogTitle", { gwFeatureName: 'wound', actorName: actor.name }),
+                    content: wounds.format("gandg.GreatWoundDialogContents", { actorName: actor.name, DC: (woundRiskCounter * 2 + 12) }),
                     buttons: {
                         one: {
-                            label: MODULE.localize("gandg.Default_roll"),
+                            label: wounds.localize("gandg.Default_roll"),
                             callback: () => {
                                 /** draw locally if we are the one prompting the change OR if not owned by any players */
                                 if (game.user.data.role !== 4 || !actor.hasPlayerOwner) {
@@ -55,10 +58,10 @@ class wounds {
                                 const socketData = {
                                     users: actor.data._source.permission,
                                     actorId: actor.id,
-                                    greatwound: true,
-                                    hp: data.updateHP,
+                                    wound: true,
                                 }
-                                game.socket.emit(`gandg.dnd5e-helpers`, socketData)
+                                game.socket.emit(`module.gandg-combat`, socketData)
+
                             }
                         }
                     }
@@ -68,38 +71,60 @@ class wounds {
         }
     }
 
+    static preUpdateActor(actor, update) {
+        let hp = getProperty(update, "data.attributes.hp.value");
+        if (hp !== undefined && !actor.isNPC) {
+            wounds.calculation(actor, update);
+        }
+    }
+
+    static calculation(actor, update) {
+        let data = {
+            actor: actor,
+            actorData: actor.data,
+            updateData: update,
+            //assumes that PC only has one token
+            actorToken: actor.getActiveTokens()[0],
+            //currentWoundRisk: token.combatant.getFlag(MODULE.data.name, 'hasWoundRisk'),
+            actorHP: actor.data.data.attributes.hp.value,
+            actorMax: actor.data.data.attributes.hp.max,
+            actorConMod: actor.data.data.abilities.con.mod,
+            updateHP: (hasProperty(update, "data.attributes.hp.value") ? update.data.attributes.hp.value : 0),
+            hpChange: (actor.data.data.attributes.hp.value - (hasProperty(update, "data.attributes.hp.value") ? update.data.attributes.hp.value : actor.data.data.attributes.hp.value))
+        };
+
+        if (data.hpChange >= 12 + data.actorConMod) {
+            let woundRiskCounter = actor.getFlag(moduleName, 'woundRiskCounter')
+                if (!woundRiskCounter) {
+                    woundRiskCounter = 1 
+                } else { 
+                    woundRiskCounter ++
+                }
+
+            return actor.setFlag(moduleName, 'woundRiskCounter', woundRiskCounter)
+        }}
+
     static async drawWound(actor) {
-        const gwFeatureName = MODULE.setting("GreatWoundFeatureName");
-        const saveTest = 12 + 2 * actor.getFlag(moduleName, 'woundRiskCounter');
-        let wSave = await new roll('d20').evaluate();
-        let sanitizedTokenName = MODULE.sanitizeTokenName(actor, "GreatAndOpenWoundMaskNPC", "gwFeatureName")
+        const saveTest = 12 + (2 * actor.getFlag(moduleName, 'woundRiskCounter'));
+        let wSave = await new Roll('d20').evaluate();
+        let actorName = actor.data.name.capitalize()
+        
+        actor.unsetFlag(moduleName, 'woundRiskCounter')
+        
         if (wSave.total < saveTest) {
-            const greatWoundTable = MODULE.setting("GreatWoundTableName");
             ChatMessage.create({
-                content: MODULE.format("DND5EH.GreatWoundDialogFailMessage", {
-                    actorName: sanitizedTokenName,
-                    gwFeatureName: gwFeatureName,
+                content: wounds.format("gandg.GreatWoundDialogFailMessage", {
+                    actorName: actorName,
+                    gwFeatureName: 'wound',
                 }),
             });
-            if (greatWoundTable !== "") {
-                let { results } = await game.tables
-                    .getName(greatWoundTable)
-                    .draw({ roll: null, results: [], displayChat: true });
-                if (MODULE.setting("GreatWoundItemSetting") != '0') {
-                    GreatWound.itemResult(actor, results)
-                }
-            } else {
-                ChatMessage.create({
-                    content: MODULE.format("DND5EH.GreatWoundDialogError", {
-                        gwFeatureName: gwFeatureName,
-                    }),
-                });
-            }
+            //create active effect
+            await game.dfreds.effectInterface.addEffect({effectName: 'Open Wound', uuid: actor.uuid })
         } else {
             ChatMessage.create({
-                content: MODULE.format("DND5EH.GreatWoundDialogSuccessMessage", {
-                    actorName: sanitizedTokenName,
-                    gwFeatureName: gwFeatureName,
+                content: wounds.format("gandg.GreatWoundDialogSuccessMessage", {
+                    actorName: actorName,
+                    gwFeatureName: 'wound',
                 }),
             });
         }
@@ -107,7 +132,7 @@ class wounds {
     }
 
     static woundSocket(socketData) {
-        if (!socketData.greatwound && socketData.hp > 0) return
+        if (!socketData.wound) return
         //Rolls Saves for owned tokens
         let actor = game.actors.get(socketData.actorId);
         for (const [key, value] of Object.entries(socketData.users)) {
@@ -118,25 +143,18 @@ class wounds {
             }
 
         }
-        if (socketData.hp === 0 && MODULE.setting("OpenWounds0HPGW")) {
-            const gwFeatureName = MODULE.setting("GreatWoundFeatureName");
-            DnDWounds.OpenWounds(
-                actor,
-                MODULE.format("DND5EH.OpenWoundSocketMessage", {
-                    gwFeatureName: gwFeatureName,
-                })
-            );
-        }
+
+    }
+    static format(...args){
+        return game.i18n.format(...args);
+    }
+    static localize(...args){
+        return game.i18n.localize(...args);
     }
 }
-     
-
-/*
-hook on updateActor
-did hp change more than conmod + 12?
-look for flag on actor combatant for active scene
-add counter
-
+class injuries {
+    
+}   
 
 Hooks.on(`setup`, () => {
     wounds.hooks();
@@ -144,5 +162,5 @@ Hooks.on(`setup`, () => {
 
 Hooks.once('init', async function() {
     console.log('gandg combat | initialize')
-*/
 
+});
