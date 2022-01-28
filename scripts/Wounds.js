@@ -19,6 +19,7 @@ class wounds {
         Hooks.on('updateCombat', wounds.checkCombatTrigger);
         
         Hooks.on("preUpdateActor", wounds.preUpdateActor);
+        //Hooks.on("deleteCombat", cleanupFlags)
     }
 
     static createTracker(combatant) {
@@ -120,6 +121,7 @@ class wounds {
             });
             //create active effect
             await game.dfreds.effectInterface.addEffect({effectName: 'Open Wound', uuid: actor.uuid })
+            await game.dfreds.effectInterface.addEffect({effectName: 'Bleeding', uuid: actor.uuid })
         } else {
             ChatMessage.create({
                 content: wounds.format("gandg.GreatWoundDialogSuccessMessage", {
@@ -153,8 +155,17 @@ class wounds {
     }
 }
 class injuries {
-    
+    /*
+    trigger for falling from wounds
+    injury triggers
+    unconscious due to wounds or damage
+    fail wound confirmation check by 10 or more
+    suffer critical hit and attacker makes a second attack roll
+    */
 }   
+
+
+
 
 Hooks.on(`setup`, () => {
     wounds.hooks();
