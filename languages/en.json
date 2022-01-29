@@ -1,8 +1,9 @@
 {
   "gandg.GreatWoundDialogTitle" : "{gwFeatureName} roll for {actorName}",
   "gandg.GreatWoundDialogContents" : "Prompt the User controlling {actorName} to roll a save against DC {DC}",
-  "gandg.GreatWoundDialogFailMessage": "{actorName} failed the {gwFeatureName} save",
-  "gandg.GreatWoundDialogSuccessMessage": "{actorName} passed the {gwFeatureName} save",
+  "gandg.GreatWoundDialogFailMessage": "{actorName} failed the {gwFeatureName} save of DC {saveTest}",
+  "gandg.GreatWoundDialogCritFailMessage": "{actorName} critically failed the {gwFeatureName} save of DC {saveTest} and may have an injury",
+  "gandg.GreatWoundDialogSuccessMessage": "{actorName} passed the {gwFeatureName} save of DC {saveTest}",
   "gandg.GreatWoundDialogError" : "Looks like you haven't setup a table to use for {gwFeatureName} yet",
 
   "setting.GreatWoundFeatureName.name" : "Great Wound name replacement",
@@ -23,6 +24,11 @@
     "gandg.Default_none" : "None", 
     "gandg.Default_SocketSetup" :"Dnd5e helpers socket received",
     "gandg.Default_SocketSend": "socket send with {socketData}",
-    "gandg.Default_roll" : "Roll"
+    "gandg.Default_roll" : "Roll",
+    "gandg.Default_critrollcancel": "Not a critical, Cancel",
 
+    "gandg.critInjuryDialogTitle": "{gwFeatureName} roll for {NPCName}",
+    "gandg.critInjuryDialogContents": "Roll NPC critical confirmation (attack roll must hit player(s) again)",
+    "gandg.critResults": "Creature hit {actorNames} brutally and may have caused an injury",
+    "gandg.injuryAdjudication": "The following players incurred possible injuries during the previous combat: {injuredActors}"
 }
