@@ -1,4 +1,4 @@
-import { wounds } from './scripts/Wounds.js';
+import { wounds } from './scripts/wounds.js';
 
 Hooks.on(`setup`, () => {
     wounds.hooks();
