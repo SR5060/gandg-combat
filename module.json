@@ -1,10 +1,28 @@
 {
+    "name": "gandg-combat",
+    "title": "Grit and Glory Combat",
+    "description": "Grit and Glory Wound and Injury automation",
+    "version": "This is auto replaced",
+    "library": "false",
+    "manifestPlusVersion": "0.0.1",
+    "minimumCoreVersion": "9",
+    "compatibleCoreVersion": "9",
     "authors": [
       {
         "name": "SR5060"
       }
     ],
-    "description": "Grit and Glory Wound and Injury automation",
+    "dependencies": [
+  
+    ],
+    "conflicts": [
+      
+    ],
+    "esmodules": [
+      "/module.js"
+    ],
+    "styles": [
+    ],
     "languages": [
       {
         "lang": "en",
@@ -12,16 +30,7 @@
         "path": "languages/en.json"
       }
     ],
-    "minimumCoreVersion": "9",
-    "compatibleCoreVersion": "9",
-    "name": "gandg-combat",
-    "esmodules": [
-      "module.js"
-    ],
-    "socket": true,
-    "title": "Grit and Glory Combat",
-    "version": "0.1",
-    "manifest": "https://github.com/SR5060/gandg-combat/blob/master/module.json",
-    "download": "https://github.com/SR5060/gandg-combat/archive/refs/tags/Initial.zip"
-  
+    "url": "This is auto replaced",
+    "manifest": "This is auto replaced",
+    "download": "This is auto replaced"
   }
