@@ -10,12 +10,8 @@ class wounds {
     static hooks() {
         Hooks.on("ready", () => {
             game.socket.on(`module.gandg-combat`, wounds.woundSocket);
-
-
-        });
-        
+        });     
         Hooks.on('createCombatant', wounds.createTracker);
-
         Hooks.on('updateCombat', wounds.checkCombatTrigger);
         Hooks.on("midi-qol.AttackRollComplete", injuries.critAttack)
         Hooks.on("preUpdateActor", wounds.preUpdateActor);

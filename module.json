@@ -15,7 +15,7 @@
     "minimumCoreVersion": "9",
     "name": "gandg-combat",
     "scripts": [
-      "scripts/wounds.js"
+      "/scripts/wounds.js"
     ],
     "socket": true,
     "title": "Grit and Glory Combat",
