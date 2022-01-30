@@ -71,9 +71,9 @@ export class wounds {
 
     static preUpdateActor(actor, update) {
         let hp = getProperty(update, "data.attributes.hp.value");
-        if (hp <= 0 && !actor.isNPC) {
+        if (hp <= 0 && actor.hasPlayerOwner) {
             injuries.addInjuryToken(actor);
-        } else if (hp !== undefined && !actor.isNPC) {
+        } else if (hp !== undefined && hasPlayerOwner) {
             wounds.calculation(actor, update);
         }
     }
