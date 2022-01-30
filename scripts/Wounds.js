@@ -2,7 +2,7 @@
 
 const moduleName = 'gandg-combat'
 
-class wounds {
+export class wounds {
     static register() {
         wounds.hooks();
     }
@@ -168,8 +168,9 @@ class wounds {
     static localize(...args){
         return game.i18n.localize(...args);
     }
-}
-class injuries {
+};
+
+export class injuries {
 
     static critWoundFailCalc(actor, actorName, saveTest) {
         ChatMessage.create({
@@ -271,7 +272,7 @@ class injuries {
 } 
 
 
-
+/*
 Hooks.on(`setup`, () => {
     wounds.hooks();
 });
@@ -280,4 +281,4 @@ Hooks.once('init', async function() {
     console.log('gandg combat | initialize')
 
 });
-
+*/
