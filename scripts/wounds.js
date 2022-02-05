@@ -1,4 +1,3 @@
-//import { moduleName } from '../module.js';
 
 const moduleName = 'gandg-combat'
 
@@ -73,7 +72,7 @@ export class wounds {
         let hp = getProperty(update, "data.attributes.hp.value");
         if (hp <= 0 && actor.hasPlayerOwner) {
             injuries.addInjuryToken(actor);
-        } else if (hp !== undefined && hasPlayerOwner) {
+        } else if (hp !== undefined && actor.hasPlayerOwner) {
             wounds.calculation(actor, update);
         }
     }
@@ -127,9 +126,36 @@ export class wounds {
                 }),
             })};
             //create active effect
-            await game.dfreds.effectInterface.addEffect({effectName: 'Open Wound', uuid: actor.uuid })
-            await game.dfreds.effectInterface.addEffect({effectName: 'Bleeding', uuid: actor.uuid })
-            
+            let openWoundUpdated = false
+            let bleedingUpdated = false
+            let effectLabel
+            let counters = ActiveEffectCounter.getCounters(actor)
+            for (const effectEntity of actor.effects) {
+                if (effectEntity.data.label === "Open Wound") {
+                    openWoundUpdated = true;
+                    effectLabel = effectEntity.data.icon
+                    //create counter
+                    let effectCounters = counters.find( ({path}) => path === effectLabel)
+                        if (effectCounters) {
+                            await effectCounters.setValue(effectCounters.getValue() + 1)
+                        }
+                    } else if (effectEntity.data.label === "Bleeding") {
+                    bleedingUpdated = true;
+                    effectLabel = effectEntity.data.icon
+                    //create counter
+                    let effectCounters = counters.find( ({path}) => path === effectLabel)
+                        if (effectCounters) {
+                            await effectCounters.setValue(effectCounters.getValue() + 1)
+                        }       
+                }
+              }
+            if (!openWoundUpdated) {
+                await game.dfreds.effectInterface.addEffect({effectName: 'Open Wound', uuid: actor.uuid })
+            };
+            if (!bleedingUpdated) {
+                await game.dfreds.effectInterface.addEffect({effectName: 'Bleeding', uuid: actor.uuid })
+            }
+
             let openWoundCount = actor.data.effects.filter(i => i.data.label === 'Open Wound').length
             
             if (openWoundCount > Math.ceil(actor.data.data.details.level/2) + actor.data.data.abilities.con.mod) {
@@ -271,14 +297,3 @@ export class injuries {
     }
 } 
 
-
-/*
-Hooks.on(`setup`, () => {
-    wounds.hooks();
-});
-
-Hooks.once('init', async function() {
-    console.log('gandg combat | initialize')
-
-});
-*/
