@@ -283,8 +283,9 @@ export class injuries {
     static injuryAdjudication(combat) {
         let injuredActors = []
         combat.combatants.forEach(combatant => {
-            await combatant.actor.unsetFlag(moduleName, 'woundRiskCounter');
-
+            if (combatant.actor.data?.flags["gandg-combat"]?.woundRiskCounter)
+            return combatant.actor.unsetFlag(moduleName, 'woundRiskCounter');
+            
             if (combatant.actor.data?.flags["gandg-combat"]?.injuryToken)
             injuredActors.push(`${combatant.actor.data.name.capitalize()} with ${combatant.actor.data?.flags["gandg-combat"]?.injuryToken} injury tokens`)
             return combatant.actor.unsetFlag(moduleName, 'injuryToken');
