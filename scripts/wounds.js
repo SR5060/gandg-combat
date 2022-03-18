@@ -35,36 +35,37 @@ export class wounds {
     static checkCombatTrigger(combat, changed) {
 
         const currentCombatant = combat.combatants.get(combat.current.combatantId)
-        if (currentCombatant.getFlag(moduleName, 'hasWoundRisk')) {
-            const actor = game.actors.get(currentCombatant.getFlag(moduleName, 'hasWoundRisk').actorId)
-            const woundRiskCounter = actor.getFlag(moduleName, 'woundRiskCounter')
-            if (woundRiskCounter > 0) {
-            
-                new Dialog({
-                    title: wounds.format("gandg.GreatWoundDialogTitle", { gwFeatureName: 'wound', actorName: actor.name }),
-                    content: wounds.format("gandg.GreatWoundDialogContents", { actorName: actor.name, DC: (woundRiskCounter * 2 + 12) }),
-                    buttons: {
-                        one: {
-                            label: wounds.localize("gandg.Default_roll"),
-                            callback: () => {
-                                /** draw locally if we are the one prompting the change OR if not owned by any players */
-                                if (game.user.data.role !== 4 || !actor.hasPlayerOwner) {
-                                    wounds.drawWound(actor);
-                                    return;
-                                }
-                                const socketData = {
-                                    users: actor.data._source.permission,
-                                    actorId: actor.id,
-                                    wound: true,
-                                }
-                                game.socket.emit(`module.gandg-combat`, socketData)
+        if (combat.combatant?.actor?.testUserPermission(game.user, "OWNER")) {
+            if (currentCombatant.getFlag(moduleName, 'hasWoundRisk')) {
+                const actor = game.actors.get(currentCombatant.getFlag(moduleName, 'hasWoundRisk').actorId)
+                const woundRiskCounter = actor.getFlag(moduleName, 'woundRiskCounter')
+                if (woundRiskCounter > 0) {
+                
+                    new Dialog({
+                        title: wounds.format("gandg.GreatWoundDialogTitle", { gwFeatureName: 'wound', actorName: actor.name }),
+                        content: wounds.format("gandg.GreatWoundDialogContents", { actorName: actor.name, DC: (woundRiskCounter * 2 + 12) }),
+                        buttons: {
+                            one: {
+                                label: wounds.localize("gandg.Default_roll"),
+                                callback: () => {
+                                    /** draw locally if we are the one prompting the change OR if not owned by any players */
+                                    if (game.user.data.role !== 4 || !actor.hasPlayerOwner) {
+                                        wounds.drawWound(actor);
+                                        return;
+                                    }
+                                    const socketData = {
+                                        users: actor.data._source.permission,
+                                        actorId: actor.id,
+                                        wound: true,
+                                    }
+                                    game.socket.emit(`module.gandg-combat`, socketData)
 
+                                }
                             }
                         }
-                    }
-                }).render(true)
+                    }).render(true)
+                }            
             }
-            
         }
     }
 
@@ -282,6 +283,8 @@ export class injuries {
     static injuryAdjudication(combat) {
         let injuredActors = []
         combat.combatants.forEach(combatant => {
+            await combatant.actor.unsetFlag(moduleName, 'woundRiskCounter');
+
             if (combatant.actor.data?.flags["gandg-combat"]?.injuryToken)
             injuredActors.push(`${combatant.actor.data.name.capitalize()} with ${combatant.actor.data?.flags["gandg-combat"]?.injuryToken} injury tokens`)
             return combatant.actor.unsetFlag(moduleName, 'injuryToken');
